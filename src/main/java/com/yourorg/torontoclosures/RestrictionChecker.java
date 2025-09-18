@@ -454,4 +454,36 @@ public class RestrictionChecker {
             }
         }
     }
+
+    public static void main(String[] args) {
+        // create a logger for local runs
+        java.util.logging.Logger log = java.util.logging.Logger.getLogger("RestrictionCheckerMain");
+
+        // create a simple ExecutionContext implementation for local invocation
+        ExecutionContext ctx = new SimpleExecutionContext(log);
+
+        // call the existing run method (timerInfo string + context)
+        try {
+            new RestrictionChecker().run("manual-invocation", ctx);
+        } catch (Exception ex) {
+            log.severe("Local run failed: " + ex.toString());
+            ex.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    // Minimal ExecutionContext implementation used only for local CLI runs
+    private static class SimpleExecutionContext implements ExecutionContext {
+        private final java.util.logging.Logger logger;
+        SimpleExecutionContext(java.util.logging.Logger logger) { this.logger = logger; }
+
+        @Override
+        public java.util.logging.Logger getLogger() { return logger; }
+
+        @Override
+        public String getInvocationId() { return "local-invocation"; }
+
+        @Override
+        public String getFunctionName() { return "PollRodars"; }
+    }
 }
