@@ -63,17 +63,6 @@
       <artifactId>proj4j</artifactId>
       <version>1.1.0</version>
     </dependency>
-
-    <!-- (Optional) If you decide to use Microsoft Graph Java SDK instead of direct HTTP:
-         NOTE: the Graph SDK brings many transitive deps and sometimes complicates packaging.
-         If you prefer direct calls (okhttp) to Graph endpoints you can omit the Graph SDK. -->
-    <!--
-    <dependency>
-      <groupId>com.microsoft.graph</groupId>
-      <artifactId>microsoft-graph</artifactId>
-      <version>5.4.0</version>
-    </dependency>
-    -->
   </dependencies>
 
   <build>
@@ -90,7 +79,7 @@
         </configuration>
       </plugin>
 
-      <!-- Maven Shade plugin to create a fat/uber JAR -->
+      <!-- Maven Shade plugin to create a fat/uber JAR with Main-Class in manifest -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -105,7 +94,13 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>uber</shadedClassifierName>
+
               <transformers>
+                <!-- Write Main-Class into the manifest so java -jar works -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.yourorg.torontoclosures.RestrictionChecker</mainClass>
+                </transformer>
+
                 <!-- Merge service files if needed -->
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
               </transformers>
