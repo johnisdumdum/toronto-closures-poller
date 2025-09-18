@@ -1,0 +1,29 @@
+name: Poll closures every 15m
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # every 15 minutes (UTC)
+  workflow_dispatch:
+
+jobs:
+  run-poller:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Build (optional)
+        run: mvn -B -DskipTests package
+      - name: Run Java jar
+        run: |
+          java -jar ./target/toronto-closures-func-1.0.0-uber.jar
+        env:
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          TENANT_ID: ${{ secrets.TENANT_ID }}
+          SP_SITE_URL: ${{ secrets.SP_SITE_URL }}
+          BUFFER_METERS: ${{ secrets.BUFFER_METERS }}
+          CITY_LAYER_QUERY: ${{ secrets.CITY_LAYER_QUERY }}
